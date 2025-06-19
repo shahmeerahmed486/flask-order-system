@@ -146,6 +146,17 @@ def mark_delivered(order_id):
     flash('Order marked as delivered!')
     return redirect(url_for('index'))
 
+@app.route('/cancel_order/<int:order_id>')
+def cancel_order(order_id):
+    conn= sqlite3.connect('orders.db')
+    c=conn.cursor()
+    c.execute('UPDATE orders SET status = ? WHERE id = ?', ('Cancelled', order_id))
+    conn.commit()
+    conn.close()
+    log_action('cancelled', order_id, 'System')
+    flash('Order has been cancelled')
+    return redirect(url_for('index'))
+
 @app.route('/logs')
 def view_logs():
     conn = sqlite3.connect('orders.db')
